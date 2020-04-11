@@ -1,4 +1,4 @@
-This repo is linked to a StackOverflow question
+This repo is linked to a StackOverflow question: https://stackoverflow.com/questions/61160332/webpack-prevent-emit-css-for-some-files-with-css-modules
 
 ### How to run the repro examples:
 
