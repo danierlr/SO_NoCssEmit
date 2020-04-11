@@ -3,6 +3,25 @@ const path = require('path')
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
+// remove spam caused by mini-extract-css-plugin
+class CleanUpStatsPlugin {
+  shouldPickStatChild(child) {
+    return child.name.indexOf('mini-css-extract-plugin') !== 0
+  }
+
+  apply(compiler) {
+    compiler.hooks.done.tap('CleanUpStatsPlugin', (stats) => {
+      const children = stats.compilation.children
+      if (Array.isArray(children)) {
+        // eslint-disable-next-line no-param-reassign
+        stats.compilation.children = children.filter((child) =>
+          this.shouldPickStatChild(child)
+        )
+      }
+    })
+  }
+}
+
 module.exports = {
   mode: 'development',
 
@@ -20,6 +39,7 @@ module.exports = {
   },
 
   plugins: [
+    new CleanUpStatsPlugin(),
     new MiniCssExtractPlugin({
       filename: 'style.css',
       chunkFilename: '[id].css',
@@ -47,6 +67,7 @@ module.exports = {
       {
         test: /\.noemit\.scss$/,
         use: [
+          //MiniCssExtractPlugin.loader, // after disabling this, it started to work
           {
             loader: 'css-loader',
             options: {
