@@ -1,7 +1,7 @@
 'use strict'
 const path = require('path')
 
-//const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
   mode: 'development',
@@ -19,15 +19,12 @@ module.exports = {
     port: 9000,
   },
 
-  // plugins: [
-  //   new ServerMiniCssExtractPlugin({
-  //     // Options similar to the same options in webpackOptions.output
-  //     // all options are optional
-  //     filename: 'style.css',
-  //     chunkFilename: '[id].css',
-  //     //ignoreOrder: false, // Enable to remove warnings about conflicting order
-  //   }),
-  // ],
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: 'style.css',
+      chunkFilename: '[id].css',
+    }),
+  ],
 
   module: {
     rules: [
@@ -47,25 +44,70 @@ module.exports = {
         }],
       },
 
-      // {
-      //   test: /\.noemit\.scss$/,
-      //   use: [
-      //     ServerMiniCssExtractPlugin.loader,
-      //     loaders.css({ modules: true }),
-      //     loaders.postCss(),
-      //     loaders.sass(),
-      //   ],
-      // },
-      // {
-      //   test: /\.scss$/,
-      //   exclude: [/\.noemit\.scss$/],
-      //   use: [
-      //     loaders.extractCss(),
-      //     loaders.css({ modules: true }),
-      //     loaders.postCss(),
-      //     loaders.sass(),
-      //   ],
-      // },
+      {
+        test: /\.noemit\.scss$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                mode: 'local',
+                exportGlobals: true,
+                localIdentName: '[path][name]__[local]--[hash:base64:5]',
+                context: path.resolve(__dirname, 'src'),
+                hashPrefix: '_',
+              },
+              importLoaders: 2,
+              onlyLocals: true, // setting this to true causes transpilation to crash
+            },
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: () => [require('autoprefixer')]
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+            },
+          },
+        ],
+      },
+
+      {
+        test: /\.scss$/,
+        exclude: [/\.noemit\.scss$/],
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                mode: 'local',
+                exportGlobals: true,
+                localIdentName: '[path][name]__[local]--[hash:base64:5]',
+                context: path.resolve(__dirname, 'src'),
+                hashPrefix: '_',
+              },
+              importLoaders: 2,
+              onlyLocals: false,
+            },
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: () => [require('autoprefixer')]
+            },
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+            },
+          },
+        ],
+      },
 
     ],
   },
