@@ -1,0 +1,5 @@
+node_modules
+
+public/app.bundle.js
+
+public/styles.css
