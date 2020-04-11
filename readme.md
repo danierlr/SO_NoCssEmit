@@ -1,6 +1,6 @@
 This repo is linked to a StackOverflow question: https://stackoverflow.com/questions/61160332/webpack-prevent-emit-css-for-some-files-with-css-modules
 
-### How to run the repro examples:
+### How to run the examples:
 
 cd into the specific folder. Each folder represents a separate attemt.
 

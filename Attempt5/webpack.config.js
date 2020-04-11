@@ -145,7 +145,7 @@ module.exports = {
           test: /\.noemit\.scss$/,
 
           // in case enforce is false app.css contains all the styles, which is  unwanted
-          // in case enforce is true everything is fine except that no console output is visible if './styles.noemit.scss' is include in index.js
+          // in case enforce is true everything is fine except that no console output is visible if './styles.noemit.scss' is included in index.js
           enforce: false
         },
       }
