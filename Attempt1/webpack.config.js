@@ -47,7 +47,6 @@ module.exports = {
       {
         test: /\.noemit\.scss$/,
         use: [
-          MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
             options: {
