@@ -2,7 +2,7 @@ This repo is linked to a StackOverflow question: https://stackoverflow.com/quest
 
 ### How to run the examples:
 
-cd into the specific folder. Each folder represents a separate attemt.
+cd into the specific folder. Each folder represents a separate attempt.
 
 run 'npm i' to download the dependencies
 

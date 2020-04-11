@@ -13,6 +13,25 @@ function recursiveIssuer(module) {
   }
 }
 
+// remove spam caused by mini-extract-css-plugin
+class CleanUpStatsPlugin {
+  shouldPickStatChild(child) {
+    return child.name.indexOf('mini-css-extract-plugin') !== 0
+  }
+
+  apply(compiler) {
+    compiler.hooks.done.tap('CleanUpStatsPlugin', (stats) => {
+      const children = stats.compilation.children
+      if (Array.isArray(children)) {
+        // eslint-disable-next-line no-param-reassign
+        stats.compilation.children = children.filter((child) =>
+          this.shouldPickStatChild(child)
+        )
+      }
+    })
+  }
+}
+
 module.exports = {
   mode: 'development',
 
@@ -36,6 +55,7 @@ module.exports = {
   },
 
   plugins: [
+    new CleanUpStatsPlugin(),
     new MiniCssExtractPlugin({
       filename: "[name].css",
       chunkFilename: "[id].css"
@@ -130,6 +150,7 @@ module.exports = {
   optimization: {
     splitChunks: {
       cacheGroups: {
+        default: false,
         groupUnusedStyles: {
           name: "unusedStyles",
           chunks: "all",
@@ -144,10 +165,32 @@ module.exports = {
 
           test: /\.noemit\.scss$/,
 
+          //priority: 10,
+
           // in case enforce is false app.css contains all the styles, which is  unwanted
           // in case enforce is true everything is fine except that no console output is visible if './styles.noemit.scss' is included in index.js
-          enforce: false
+          enforce: true
         },
+        // groupUsedStyles: {
+        //   name: "usedStyles",
+        //   chunks: "all",
+
+        //   // test: (module, chunks, entry = 'styles') => {
+        //   //   if(module.constructor.name == "CssModule"){
+        //   //     console.log('aaa', module, chunks)
+        //   //   }
+            
+        //   //   return module.constructor.name == "CssModule";
+        //   // },
+
+        //   test: /\.scss$/,
+
+        //   //priority: 0,
+
+        //   // in case enforce is false app.css contains all the styles, which is  unwanted
+        //   // in case enforce is true everything is fine except that no console output is visible if './styles.noemit.scss' is included in index.js
+        //   enforce: false
+        // },
       }
     }
   }
