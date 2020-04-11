@@ -1,5 +1,5 @@
 node_modules
 
-public/app.bundle.js
+public
 
-public/styles.css
+!public/index.html

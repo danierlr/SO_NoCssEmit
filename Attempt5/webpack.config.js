@@ -16,14 +16,16 @@ function recursiveIssuer(module) {
 module.exports = {
   mode: 'development',
 
+  devtool: 'inline-source-map',
+
   entry: {
     app: "./src/index.js"
   },
 
   output: {
     path: path.join(__dirname, 'public'),
-    filename: "[name].js",
-    chunkFilename: "[id].js",
+    filename: "[name].bundle.js",
+    chunkFilename: "[id].bundle.js",
     publicPath: '/',
   },
 
@@ -36,7 +38,7 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: "[name].css",
-      chunkFilename: "[name].css"
+      chunkFilename: "[id].css"
     })
   ],
 
@@ -58,40 +60,40 @@ module.exports = {
         }],
       },
 
-      {
-        test: /\.noemit\.scss$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: {
-              modules: {
-                mode: 'local',
-                exportGlobals: true,
-                localIdentName: '[path][name]__[local]--[hash:base64:5]',
-                context: path.resolve(__dirname, 'src'),
-                hashPrefix: '_',
-              },
-              importLoaders: 2,
-            },
-          },
-          {
-            loader: 'postcss-loader',
-            options: {
-              plugins: () => [require('autoprefixer')]
-            },
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-            },
-          },
-        ],
-      },
+      // {
+      //   test: /\.noemit\.scss$/,
+      //   use: [
+      //     MiniCssExtractPlugin.loader,
+      //     {
+      //       loader: 'css-loader',
+      //       options: {
+      //         modules: {
+      //           mode: 'local',
+      //           exportGlobals: true,
+      //           localIdentName: '[path][name]__[local]--[hash:base64:5]',
+      //           context: path.resolve(__dirname, 'src'),
+      //           hashPrefix: '_',
+      //         },
+      //         importLoaders: 2,
+      //       },
+      //     },
+      //     {
+      //       loader: 'postcss-loader',
+      //       options: {
+      //         plugins: () => [require('autoprefixer')]
+      //       },
+      //     },
+      //     {
+      //       loader: 'sass-loader',
+      //       options: {
+      //       },
+      //     },
+      //   ],
+      // },
 
       {
         test: /\.scss$/,
-        exclude: [/\.noemit\.scss$/],
+        //exclude: [/\.noemit\.scss$/],
         use: [
           MiniCssExtractPlugin.loader,
           {
@@ -128,8 +130,8 @@ module.exports = {
   optimization: {
     splitChunks: {
       cacheGroups: {
-        styles: {
-          name: "styles",
+        groupUnusedStyles: {
+          name: "unusedStyles",
           chunks: "all",
 
           // test: (module, chunks, entry = 'styles') => {
@@ -140,10 +142,11 @@ module.exports = {
           //   return module.constructor.name == "CssModule";
           // },
 
-          test: /\.s?css$/,
+          test: /\.noemit\.scss$/,
 
-
-          enforce: true
+          // in case enforce is false app.css contains all the styles, which is  unwanted
+          // in case enforce is true everything is fine except that no console output is visible if './styles.noemit.scss' is include in index.js
+          enforce: false
         },
       }
     }
